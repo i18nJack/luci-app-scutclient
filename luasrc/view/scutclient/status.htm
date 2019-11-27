@@ -144,9 +144,6 @@ end
 				<td>
 					<a href="<%=mode_links.logoff%>">下线</a>
 					<a href="<%=mode_links.redial%>">重拨</a>
-					<% if page_moved() then %>
-					<a href="<%=mode_links.move_tag%>">我不想每次打开都见到这个界面把它移走</a>
-					<% end %>
 				</td>
 			</tr>
 
@@ -160,7 +157,7 @@ end
 			</tr>
 
 			<tr class="cbi-section-table-row cbi-rowstyle-1">
-				<td width="33%"><strong>开机启动</strong></td>
+				<td width="33%"><strong>自启</strong></td>
 				<td><%=scutclient_status.enable%></td>
 			</tr>
 

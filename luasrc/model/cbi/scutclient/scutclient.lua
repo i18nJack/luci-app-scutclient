@@ -2,22 +2,7 @@
 -- 华工路由群 262939451
 scut = Map(
 	"scutclient",
-	"华南理工大学客户端 设置",
-	' <input style="margin: 2px;" class="cbi-button cbi-button-apply" type="button" value="'
-	.."Step 1 : 点此处去设置Wi-Fi"
-	..'" onclick="javascript:location.href=\''
-	..luci.dispatcher.build_url("admin/network/wireless/radio0.network1")
-	..'\'"/>'
-	..' <input style="margin: 2px;" class="cbi-button cbi-button-apply" type="button" value="'
-	.."Step 2 : 点此处去设置IP"
-	..'" onclick="javascript:location.href=\''
-	..luci.dispatcher.build_url("admin/network/network/wan")
-	..'\'"/>'
-	..' <input style="margin: 2px;" class="cbi-button cbi-button-apply" type="button" value="'
-	.."Step 3 : 点此处去修改路由器管理密码"
-	..'" onclick="javascript:location.href=\''
-	..luci.dispatcher.build_url("admin/system/admin")
-	..'\'"/>'
+	"无线上网拨号设置"
 )
 function scut.on_commit(self)
 	luci.sys.call("uci set scutclient.@luci[-1].configured=1")
@@ -29,7 +14,7 @@ end
 scut_option = scut:section(TypedSection, "option", translate("选项"))
 scut_option.anonymous = true
 
-scut_option:option(Flag, "enable", "启用")
+scut_option:option(Flag, "enable", "自启")
 
 -- config scutclient
 scut_client = scut:section(TypedSection, "scutclient", "用户信息")
