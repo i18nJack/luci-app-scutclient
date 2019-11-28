@@ -14,9 +14,9 @@ function index()
 	local uci = require "luci.model.uci".cursor()
 	local mainorder = uci:get_first("scutclient", "luci", "mainorder", 10)
 	if not uci:get_first("scutclient", "luci", "configured", false) then
-		entry({"admin", "scutclient"},
-			alias("admin", "scutclient", "settings"),
-			"华南理工大学客户端",
+		entry({"admin", "network", "scutclient"},
+			alias("admin", "network", "scutclient", "settings"),
+			"校园网",
 			mainorder
 		)
 
@@ -32,9 +32,9 @@ function index()
 			20
 		).leaf = true
 	else
-		entry({"admin", "scutclient"},
-			alias("admin", "scutclient", "status"),
-			"华南理工大学客户端",
+		entry({"admin", "network", "scutclient"},
+			alias("admin", "network", "scutclient", "status"),
+			"校园网",
 			mainorder
 		)
 
