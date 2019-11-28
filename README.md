@@ -5,9 +5,9 @@ opkg install luci-app-scutclient_2.0-2_all.ipk
 ```
 注：安装前请先安装 scutclient.
 ### 效果预览
-![](/img/1.png)
-![](/img/2.png)
-![](/img/3.png)
+![](img/1.png)
+![](img/2.png)
+![](img/3.png)
 
 
 ## LuCI 应用编译
