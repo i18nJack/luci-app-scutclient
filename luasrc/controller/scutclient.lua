@@ -12,10 +12,9 @@ function index()
 		return
 	end
 	local uci = require "luci.model.uci".cursor()
-	local mainorder = uci:get_first("scutclient", "luci", "mainorder", 10)
     
     entry({"admin", "network", "scutclient"},
-        alias("admin", "network", "scutclient", "status"), "华工无线", mainorder
+        alias("admin", "network", "scutclient", "status"), "华工无线", 0
     )
 
     entry({"admin", "network", "scutclient", "status"},
