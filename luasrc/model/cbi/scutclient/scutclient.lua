@@ -1,5 +1,3 @@
--- LuCI by libc0607 (libc0607@gmail.com)
--- 华工路由群 262939451
 scut = Map(
 	"scutclient",
 	"无线上网拨号设置"
