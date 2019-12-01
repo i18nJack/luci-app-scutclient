@@ -1,3 +1,12 @@
+--[[
+                 _       _ _            _   
+  ___  ___ _   _| |_ ___| (_) ___ _ __ | |_ 
+ / __|/ __| | | | __/ __| | |/ _ \ '_ \| __|
+ \__ \ (__| |_| | || (__| | |  __/ | | | |_ 
+ |___/\___|\__,_|\__\___|_|_|\___|_| |_|\__|
+                                            
+--]]
+
 module("luci.controller.scutclient", package.seeall)
 
 http = require "luci.http"
@@ -29,7 +38,11 @@ function index()
         template("scutclient/logs"), "日志", 30
     ).leaf = true
     
-	entry({"admin", "network", "scutclient", "get_log"}, call("get_log"))
+    entry({"admin", "network", "scutclient", "about"}, 
+        call("action_about"), "关于", 40
+    ).leaf = true
+	
+    entry({"admin", "network", "scutclient", "get_log"}, call("get_log"))
 	entry({"admin", "network", "scutclient", "netstat"}, call("get_netstat"))
 end
 
@@ -55,6 +68,10 @@ function action_status()
 		luci.sys.call("/etc/init.d/scutclient stop > /dev/null")
 		luci.sys.call("/etc/init.d/scutclient start > /dev/null")
 	end
+end
+
+function action_about()
+	luci.template.render("scutclient/about")
 end
 
 function get_netstat()

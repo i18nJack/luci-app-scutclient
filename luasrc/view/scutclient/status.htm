@@ -1,4 +1,7 @@
 <%
+-- LuCI by libc0607
+-- Modified by i18nJack
+
 local sys  = require "luci.sys"
 local fs = require "nixio.fs"
 local uci = require "luci.model.uci".cursor()
@@ -8,11 +11,8 @@ local luci_app_scutclient_version = luci.sys.exec("opkg list-installed luci-app-
 local scutclient_status = {}
 scutclient_status.enable = uci:get_first("scutclient", "option", "enable")
 scutclient_status.username = uci:get_first("scutclient", "scutclient", "username")
-scutclient_status.password = uci:get_first("scutclient", "scutclient", "password")
-scutclient_status.hostname = uci:get_first("scutclient", "drcom", "hostname")
 scutclient_status.version = uci:get_first("scutclient", "drcom", "version")
-scutclient_status.hash = uci:get_first("scutclient", "drcom", "hash")
-scutclient_status.server_auth_ip = uci:get_first("scutclient", "drcom", "server_auth_ip")
+
 local mode_links = {}
 mode_links.base = luci.dispatcher.build_url("admin/network/scutclient/status")
 mode_links.redial = mode_links.base.."?redial=1"
@@ -28,10 +28,6 @@ if stat then
 else
 	wan = ntm:get_wannet()
 	wandev = ntm:get_wandev()
-end
-
-function page_moved()
-	return (uci:get_first("scutclient", "luci", "mainorder", 10) == 10)
 end
 
 function get_client_status(exec_name)
@@ -56,7 +52,7 @@ end
 			</tr>
         
 			<tr class="cbi-section-table-row cbi-rowstyle-1">
-				<td width="33%"><strong>主程序运行状态</strong></td>
+				<td width="50%"><strong>主程序运行状态</strong></td>
 				<% if get_client_status("scutclient") then %>
 				<td style="color: red;">运行中</td>
 				<% else %>
@@ -65,7 +61,7 @@ end
 			</tr>
 
            <tr class="cbi-section-table-row cbi-rowstyle-1">
-				<td width="33%"><strong>快捷功能</strong></td>
+				<td width="33%"><strong>服务开关</strong></td>
 				<td>
 					<a name="logoff" href="<%=mode_links.logoff%>">下线</a>
                    &nbsp;&nbsp;     
@@ -98,16 +94,19 @@ end
 				<td width="33%"><strong>MAC 地址</strong></td>
 				<td id="status_macaddr"><%=wandev:mac()%></td>
 			</tr>
+            
 			<tr class="cbi-section-table-row cbi-rowstyle-2" id="all_status_net">
 				<td width="33%"><strong>网络状态</strong></td>
 				<td id="status_net">正在获取中……</td>
 			</tr>
+            
 			<% else %>
-			<tr class="cbi-section-table-row cbi-rowstyle-2">
-				<td colspan="2" style="color: red;">WAN 接口未设置</td>
+            <tr class="cbi-section-table-row cbi-rowstyle-1">
+				<td style="color: red;">WAN 接口设置异常</td>
+                <td><a name="setwan" href="<%=luci.dispatcher.build_url("admin/network/network/wan")%>">前往设置</a></td>
 			</tr>
 			<% end %>
-
+            
 			<tr class="cbi-section-table-row cbi-rowstyle-2">
 				<td width="33%"><strong>主程序版本</strong></td>
 				<td><%=scutclient_version%></td>
@@ -127,66 +126,6 @@ end
 </fieldset>
 
 <script type="text/javascript" language="javascript">
-	window.alert = function(txt){
-			 var shield = document.createElement("DIV");
-			 shield.id = "shield";
-			 shield.style.position = "absolute";
-			 shield.style.left = "0px";
-			 shield.style.top = "0px";
-			 shield.style.width = "100%";
-			 shield.style.height = document.body.scrollHeight+"px";
-			 shield.style.background = "#333";
-			 shield.style.textAlign = "center";
-			 shield.style.zIndex = "10000";
-			 shield.style.filter = "alpha(opacity=0)";
-			 var alertFram = document.createElement("DIV");
-			 alertFram.id="alertFram";
-			 alertFram.style.position = "absolute";
-			 alertFram.style.left = "50%";
-			 alertFram.style.top = "50%";
-			 alertFram.style.marginLeft = "-225px";
-			 alertFram.style.marginTop = "-75px";
-			 alertFram.style.width = "450px";
-			 alertFram.style.height = "150px";
-			 alertFram.style.background = "#ccc";
-			 alertFram.style.textAlign = "center";
-			 alertFram.style.lineHeight = "150px";
-			 alertFram.style.zIndex = "10001";
-			 strHtml = "<ul class='ifacebox' style='list-style:none;margin:0px;padding:0px;width:100%'>";
-			 strHtml += " <li class='ifacebox-head' style='background:#DD828D;text-align:center;padding-left:20px;font-size:16px;font-weight:bold;height:25px;line-height:25px;border:1px solid #F9CADE;'><strong>温馨提示</strong></li>";
-			 strHtml += " <li class='ifacebox-body' style='background:#fff;text-align:center;font-size:20px;height:120px;line-height:40px;border-left:1px solid #F9CADE;border-right:1px solid #F9CADE;'onclick='doOk()'>"+txt+"</li>";
-			 strHtml += "</ul>";
-			 alertFram.innerHTML = strHtml;
-			 document.body.appendChild(alertFram);
-			 this.doOk = function(){
-				 alertFram.style.display = "none";
-				 shield.style.display = "none";
-			 }
-			 alertFram.focus();
-			 document.body.onselectstart = function(){return false;};
-			}
-	if(document.getElementById("wan_status") == null)
-	{
-		var ip = document.getElementById("status_ipaddr").innerHTML;
-		var gateway = document.getElementById("status_gateway").innerHTML;
-		var isCorrect = true;
-		for (var i=0;i<3;i++)
-		{
-			isCorrect = isCorrect && (parseInt(ip.match(/\d+/g)[i]) == parseInt(gateway.match(/\d+/g)[i]));
-		}
-		if(!isCorrect)
-		{
-			alert( ip + "<br/>"+ gateway +"<br/>前三位不一致，请看教程三遍！");
-			document.getElementById("all_status_ipaddr").style.color="red";
-			document.getElementById("all_status_gateway").style.color="red";
-		}
-		else
-		{
-			document.getElementById("all_status_ipaddr").style.color="black";
-			document.getElementById("all_status_gateway").style.color="black";
-		}
-	}
-
 XHR.get('<%=luci.dispatcher.build_url("admin", "network", "scutclient", "netstat")%>', null, function(xhr, res) {
 	var statstr = "网络状态获取错误";
 	var statelem = document.getElementById("status_net");
@@ -204,6 +143,5 @@ XHR.get('<%=luci.dispatcher.build_url("admin", "network", "scutclient", "netstat
 	}
 	statelem.innerHTML = statstr;
 });
-
 </script>
 <%+footer%>
