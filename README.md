@@ -90,3 +90,38 @@ make package/luci-app-scutclient/compile V=99
 ```
 
 编译完成后，可以到 `openwrt/bin` 对应架构的 `base` 目录下查找 `scutclient` 和 `luci-app-scutclient` 的 `ipk` 安装文件。
+
+## 使用 SDK 编译
+下面以 `mt7620`  [pandorabox](https://downloads.pangubox.com/pandorabox/) 固件在 Ubuntu 18.04 上编译为例，其它架构替换相应 SDK 文件即可。
+
+```
+sudo apt install subversion g++ zlib1g-dev build-essential git python python3
+sudo apt install libncurses5-dev gawk gettext unzip file libssl-dev wget
+sudo apt install libelf-dev ecj fastjar java-propose-classpath
+sudo apt install build-essential libncursesw5-dev python unzip
+```
+
+### 下载 SDK 文件到本地
+```
+wget  https://downloads.pangubox.com/pandorabox/19.01/targets/ralink/mt7620/PandoraBox-SDK-ralink-mt7620_gcc-5.5.0_uClibc-1.0.x.Linux-x86_64-2018-12-31-git-4b6a3d5ca.tar.xz
+```
+
+### 解压 SDK
+```
+tar -xf PandoraBox-SDK-ralink-mt7620_gcc-5.5.0_uClibc-1.0.x.Linux-x86_64-2018-12-31-git-4b6a3d5ca.tar.xz
+mv PandoraBox-SDK-ralink-mt7620_gcc-5.5.0_uClibc-1.0.x.Linux-x86_64-2018-12-31-git-4b6a3d5ca mt7620
+cd mt7620
+```
+### 拉取应用源码
+```
+wget -P package/scutclient https://raw.githubusercontent.com/scutclient/scutclient/master/openwrt/Makefile 
+git clone git@github.com:i18nJack/luci-app-scutclient.git cp -r luci-app-scutclient package/luci-app-scutclient 
+./scripts/feeds install -a
+```
+### 勾选应用并编译独立文件
+```
+make menuconfig
+make package/luci-app-scutclient/compile V=99
+```
+
+相比使用源码编译不用再单独编译工具链了
